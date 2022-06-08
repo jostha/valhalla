@@ -76,6 +76,33 @@ ofnir   = Thing.new("Ofnir", 0)
 
 def mvParser (cmd, loc)
     # If player wants to go somewhere this will check if movement is allowed
+    # Case order is important, longest possibilities first :)
+    case 
+    when cmd.include?('northeast')
+        newLoc = loc + 11
+    when cmd.include?('southeast')
+        newLoc = loc - 9
+    when cmd.include?('southwest')
+        newLoc = loc - 11
+    when cmd.include?('northwest')
+        newLoc = loc + 9
+    when cmd.include?('north')
+        newLoc = loc + 10
+    when cmd.include?('east')
+        newLoc = loc + 1
+    when cmd.include?('south')
+        newLoc = loc - 10
+    when cmd.include?('west')
+        newLoc = loc - 1
+    end
+    # put the permitted movement check here
+    return newLoc
+end
+
+#--------------------------------------------------------------------
+
+def cmdParser (cmd, loc)
+    # For other commands doesn't do anything yet, just pasted from above
     splitCmd = cmd.split
     if splitCmd[0] == "go"
         puts "You want to go somewhere"
@@ -106,13 +133,14 @@ end
 
 #--------------------------------------------------------------------
 
-
 # Games loop
 gameRun = 1
 loc = 2
 
 while gameRun == 1
-    puts "You are in " + locations[loc].descr + "."
+    #puts "You are in " + locations[loc].descr
+    #uncomment above when all locations are in
     cmd = gets
-    mvParser(cmd.downcase, loc)
+    loc = mvParser(cmd.downcase, loc)
+    puts loc
 end
