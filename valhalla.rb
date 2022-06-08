@@ -4,12 +4,12 @@
 #--------------------------------------------------------------------
 
 class Area
-    attr_accessor  :descr, :exitN, :exitNE, :exitE, :exitSE, :exitS, :exitSW, :exitW, :exitNW, :exitR, :exitRequire, :exitBlock
+    attr_accessor  :descr, :exitN, :exitNE, :exitE, :exitSE, :exitS, :exitSW, :exitW, :exitNW, :exitR
     # id = Room ID
     # exit is -1 if blocked
     # exitR is destination room id if ring used
     # exitReq is a required item to move
-    def initialize(descr, exitN, exitNE, exitE, exitSE, exitS, exitSW, exitW, exitNW, exitR, exitRequire, exitBlock)
+    def initialize(descr, exitN, exitNE, exitE, exitSE, exitS, exitSW, exitW, exitNW, exitR)
         @descr = descr
         @exitN = exitN
         @exitNE = exitNE
@@ -20,8 +20,6 @@ class Area
         @exitW = exitW
         @exitNW = exitNW
         @exitR = exitR
-        @exitRequire = exitRequire
-        @exitBlock = exitBlock
     end
 end
 
@@ -45,18 +43,23 @@ end
 # Movement values:
 #  0 : Can't go that way
 #  1 : Can go that way
-#  2 : Requires xReq to go that way
-#  3 : Cannot be carrying xBlock to go that way
-#  4 : Requires xReq AND cannot be carrying xBlock to go that way
+
+# Handle locked and unlocked routes when items are collected to keep movement matrix simple and number of conditions down
+# I have set special movement to 2 (i.e. requiring / not requiring an object) for testing
 
 # Dummy room inserted so I can count from 1, simpler without a map matrix
-locations = [
-    #                 descr             N  NE   E  SE   S  SW   W  NW   R  xReq       xBlock
-            Area.new("dummy room",      0,  0,  0,  0,  0,  0,  0,  0,  0,       "" ,       ""),
-            Area.new("a cave in Hell",  0,  0,  4,  0,  0,  0,  0,  0, 59, "drapnir",  "ofnir"),
-            Area.new("a cave in Hell",  0,  0,  1,  0,  0,  0,  4,  0, 01, "drapnir",  "ofnir"),
-            Area.new("in Hell",         0,  0,  4,  0,  0,  0,  1,  0, 03,  "shield", "helmet"),
-            Area.new("in Hell",         0,  0,  0,  0,  0,  0,  4,  0, 59,  "shield", "helmet")
+@locations = [
+    #                 descr                 N  NE   E  SE   S  SW   W  NW   R 
+            Area.new("dummy room",          0,  0,  0,  0,  0,  0,  0,  0,  0),
+            Area.new("a cave in Hell",      0,  0,  2,  0,  0,  0,  0,  0, 59), # drapnir not ofnir for east
+            Area.new("a cave in Hell",      0,  0,  1,  0,  0,  0,  2,  0,  1), # drapnir not ofnir for west
+            Area.new("in Hell",             0,  0,  2,  0,  0,  0,  1,  0,  3), # shield not helmet for east
+            Area.new("in Hell",             0,  0,  0,  0,  0,  0,  2,  0, 59), # shield not helmet for west
+            Area.new("an icy waste in Hell",0,  0,  2,  0,  0,  0,  0,  0, 24), # key not felstrong for east
+            Area.new("in a cave in Hell",   2,  0,  0,  0,  0,  0,  2,  0, 71), # key not felstrong for west, skornir not ring for north
+            Area.new("an icy waste in Hell",1,  2,  1,  0,  0,  0,  0,  0,  7), # skalir for north east
+            Area.new("a marsh in Hell",     0,  1,  2,  0,  0,  0,  1,  1, 21), # no food for east
+            Area.new("a plain in Hell",     1,  0,  0,  0,  0,  0,  2,  0, 18)  # no food for west
 ]
 
 #--------------------------------------------------------------------
@@ -77,9 +80,12 @@ ofnir   = Thing.new("Ofnir", 0)
 def mvParser (cmd, loc)
     # If player wants to go somewhere this will check if movement is allowed
     # Case order is important, longest possibilities first :)
+    newLoc = loc
     case 
     when cmd.include?('northeast')
-        newLoc = loc + 11
+        if @locations[loc].exitNE > 0
+            newLoc = loc + 11
+        end
     when cmd.include?('southeast')
         newLoc = loc - 9
     when cmd.include?('southwest')
@@ -89,11 +95,15 @@ def mvParser (cmd, loc)
     when cmd.include?('north')
         newLoc = loc + 10
     when cmd.include?('east')
-        newLoc = loc + 1
+        if @locations[loc].exitE > 0
+            newLoc = loc + 1
+        end
     when cmd.include?('south')
         newLoc = loc - 10
     when cmd.include?('west')
-        newLoc = loc - 1
+        if @locations[loc].exitE > 0
+            newLoc = loc - 1
+        end
     end
     # put the permitted movement check here
     return newLoc
@@ -135,12 +145,15 @@ end
 
 # Games loop
 gameRun = 1
-loc = 2
+loc = 5
 
 while gameRun == 1
-    #puts "You are in " + locations[loc].descr
-    #uncomment above when all locations are in
+    oldLoc = loc
+    puts "You are in " + @locations[loc].descr + "."
     cmd = gets
     loc = mvParser(cmd.downcase, loc)
+    if oldLoc == loc
+        puts "That way is blocked."     
+    end
     puts loc
 end
