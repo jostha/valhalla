@@ -30,14 +30,14 @@ end
 # Some rooms are only accessible if carrying a certain item
 
 # Movement rules, perform this calc on current area number:
-#  N : +10
-# NE : +11
+#  N : +9
+# NE : +10
 #  E : +1
-# SE : -9
-#  S : -10
-# SW : -11
+# SE : -8
+#  S : -9
+# SW : -10
 #  W : -1
-# NW : +9
+# NW : +8
 #  R : Use Ring takes to R location (if 0 msg)
 
 # Movement values:
@@ -55,9 +55,9 @@ end
             Area.new("a cave in Hell",                           0,  0,  2,  0,  0,  0,  0,  0, 59), # drapnir not ofnir for east
             Area.new("a cave in Hell",                           0,  0,  1,  0,  0,  0,  2,  0,  1), # drapnir not ofnir for west
             Area.new("Hell",                                     0,  0,  2,  0,  0,  0,  1,  0,  3), # shield not helmet for east
-            Area.new("Hell",                                     0,  0,  0,  0,  0,  0,  2,  0, 59), # shield not helmet for west
+            Area.new("Hell",                                     0,  0,  0,  0,  0,  0,  2,  0, 59), # shield not helmet for west  # SKORNIR
             Area.new("an icy waste in Hell",                     0,  0,  2,  0,  0,  0,  0,  0, 24), # key not felstrong for east
-            Area.new("a cave in Hell",                           2,  0,  0,  0,  0,  0,  2,  0, 71), # key not felstrong for west, skornir not ring for north
+            Area.new("a cave in Hell",                           2,  0,  0,  0,  0,  0,  2,  0, 71), # key not felstrong for west, skornir not ring for north # FELSTRONG
             Area.new("an icy waste in Hell",                     1,  2,  1,  0,  0,  0,  0,  0,  7), # skalir for north east
             Area.new("a marsh in Hell",                          0,  1,  2,  0,  0,  0,  1,  1, 21), # no food for east
             Area.new("a plain in Hell",                          1,  0,  0,  0,  0,  0,  2,  0, 18), # no food for west
@@ -137,24 +137,34 @@ def mvParser (cmd, loc)
     case 
     when cmd.include?('northeast')
         if @locations[loc].exitNE > 0
-            newLoc = loc + 11
+            newLoc = loc + 10
         end
     when cmd.include?('southeast')
-        newLoc = loc - 9
+        if @locations[loc].exitSE > 0
+            newLoc = loc - 8
+        end
     when cmd.include?('southwest')
-        newLoc = loc - 11
+        if @locations[loc].exitSW > 0
+            newLoc = loc - 10
+        end
     when cmd.include?('northwest')
-        newLoc = loc + 9
+        if @locations[loc].exitNW > 0
+            newLoc = loc + 8
+        end
     when cmd.include?('north')
-        newLoc = loc + 10
+        if @locations[loc].exitN > 0
+            newLoc = loc + 9
+        end
     when cmd.include?('east')
         if @locations[loc].exitE > 0
             newLoc = loc + 1
         end
     when cmd.include?('south')
-        newLoc = loc - 10
+        if @locations[loc].exitS > 0
+            newLoc = loc - 9
+        end
     when cmd.include?('west')
-        if @locations[loc].exitE > 0
+        if @locations[loc].exitW > 0
             newLoc = loc - 1
         end
     end
@@ -198,7 +208,7 @@ end
 
 # Games loop
 gameRun = 1
-loc = 5
+loc = 17
 
 while gameRun == 1
     oldLoc = loc
