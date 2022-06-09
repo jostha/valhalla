@@ -38,7 +38,7 @@ end
 # SW : -11
 #  W : -1
 # NW : +9
-#  R : Use Ring takes to R location (if same as current location, msg)
+#  R : Use Ring takes to R location (if 0 msg)
 
 # Movement values:
 #  0 : Can't go that way
@@ -49,18 +49,40 @@ end
 
 # Dummy room inserted so I can count from 1, simpler without a map matrix
 @locations = [
-    #                 descr                 N  NE   E  SE   S  SW   W  NW   R 
-            Area.new("dummy room",          0,  0,  0,  0,  0,  0,  0,  0,  0),
-            Area.new("a cave in Hell",      0,  0,  2,  0,  0,  0,  0,  0, 59), # drapnir not ofnir for east
-            Area.new("a cave in Hell",      0,  0,  1,  0,  0,  0,  2,  0,  1), # drapnir not ofnir for west
-            Area.new("in Hell",             0,  0,  2,  0,  0,  0,  1,  0,  3), # shield not helmet for east
-            Area.new("in Hell",             0,  0,  0,  0,  0,  0,  2,  0, 59), # shield not helmet for west
-            Area.new("an icy waste in Hell",0,  0,  2,  0,  0,  0,  0,  0, 24), # key not felstrong for east
-            Area.new("in a cave in Hell",   2,  0,  0,  0,  0,  0,  2,  0, 71), # key not felstrong for west, skornir not ring for north
-            Area.new("an icy waste in Hell",1,  2,  1,  0,  0,  0,  0,  0,  7), # skalir for north east
-            Area.new("a marsh in Hell",     0,  1,  2,  0,  0,  0,  1,  1, 21), # no food for east
-            Area.new("a plain in Hell",     1,  0,  0,  0,  0,  0,  2,  0, 18)  # no food for west
-]
+    #                 descr                                      N  NE   E  SE   S  SW   W  NW   R 
+            Area.new("dummy room",                               0,  0,  0,  0,  0,  0,  0,  0,  0),
+
+            Area.new("a cave in Hell",                           0,  0,  2,  0,  0,  0,  0,  0, 59), # drapnir not ofnir for east
+            Area.new("a cave in Hell",                           0,  0,  1,  0,  0,  0,  2,  0,  1), # drapnir not ofnir for west
+            Area.new("Hell",                                     0,  0,  2,  0,  0,  0,  1,  0,  3), # shield not helmet for east
+            Area.new("Hell",                                     0,  0,  0,  0,  0,  0,  2,  0, 59), # shield not helmet for west
+            Area.new("an icy waste in Hell",                     0,  0,  2,  0,  0,  0,  0,  0, 24), # key not felstrong for east
+            Area.new("a cave in Hell",                           2,  0,  0,  0,  0,  0,  2,  0, 71), # key not felstrong for west, skornir not ring for north
+            Area.new("an icy waste in Hell",                     1,  2,  1,  0,  0,  0,  0,  0,  7), # skalir for north east
+            Area.new("a marsh in Hell",                          0,  1,  2,  0,  0,  0,  1,  1, 21), # no food for east
+            Area.new("a plain in Hell",                          1,  0,  0,  0,  0,  0,  2,  0, 18), # no food for west
+
+            Area.new("a cave in Hell",                           1,  1,  1,  0,  0,  0,  0,  0, 66),
+            Area.new("the Pits, which is in a cave in Hell",     0,  0,  1,  0,  0,  0,  1,  0, 22), 
+            Area.new("a cave in Hell",                           1,  0,  0,  0,  0,  0,  1,  0, 19),
+            Area.new("the mountains in Hell",                    0,  0,  2,  0,  0,  0,  0,  0,  0), # skalir for east
+            Area.new("Asnir, which is in the mountains in Hell", 0,  0,  2,  0,  0,  0,  2,  0, 71), # skalir for east and west
+            Area.new("the mountains in Hell",                    0,  0,  0,  0,  2,  0,  2,  0,  0),  # skalir west, skornir not ring south
+            Area.new("an icy waste in Hell",                     1,  0,  2,  1,  1,  0,  0,  0, 66), # skalir for east
+            Area.new("a plain in Hell",                          1,  0,  0,  0,  0,  1,  2,  0, 66), # skalir for west
+            Area.new("in the mountains in Hell",                 1,  0,  0,  0,  1,  1,  0,  0,  0), 
+
+            Area.new("in Hell",                                  2,  0,  2,  0,  2,  0,  0,  0, 12), # hel for north, east, and south
+            Area.new("an icy waste in Hell",                     1,  0,  2,  0,  0,  1,  0,  0, 46), # ofnir for east
+            Area.new("an icy waste in Hell",                     1,  1,  2,  0,  0,  2,  2,  1,  0), # ofnir for north, east, sw and west
+            Area.new("a marsh in Hell",                          0,  0,  1,  0,  0,  0,  2,  0,  0), # ofnir for west
+            Area.new("a marsh in Hell",                          1,  0,  0,  0,  0,  0,  1,  0, 50),
+            Area.new("a cave in Hell",                           0,  0,  2,  0,  0,  0,  0,  0, 71), # skornir for east
+            Area.new("a cave in Hell",                           0,  0,  2,  2,  0,  0,  0,  0, 71), # felstrong for east or se
+            Area.new("a cave in Hell",                           0,  0,  0,  0,  1,  0,  2,  0,  0), # felstrong for west
+            Area.new("an area of lakes in Hell",                 2,  0,  0,  0,  1,  0,  1,  0,  0), # skalir not wine for north
+
+        ]
 
 #--------------------------------------------------------------------
 
